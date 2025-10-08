@@ -22,8 +22,7 @@ define('PROXILOG_FEATURES_URL', plugin_dir_url(__FILE__));
 
 # Hooks
 add_action('admin_menu', 'proxilog_add_admin_menu');
-
-# Fonctions
+add_action('admin_enqueue_scripts', 'proxilog_enqueue_assets');
 
 /**
  * Ajoute une page d'options dans l'admin WordPress
@@ -51,4 +50,31 @@ function proxilog_options_page()
     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
   </div>
 <?php
+}
+
+
+/**
+ * Enregistre et charge les scripts
+ */
+function proxilog_enqueue_assets($base)
+{
+  if ($base !== 'toplevel_page_proxilog-options') {
+    return;
+  }
+
+  $file_path = PROXILOG_FEATURES_DIR . 'build/index.asset.php';
+
+  if (!file_exists($file_path)) {
+    return;
+  }
+
+  $asset_file = include $file_path;
+
+  wp_enqueue_script(
+    'proxilog-features-script',
+    PROXILOG_FEATURES_URL . 'build/index.js',
+    $asset_file['dependencies'],
+    $asset_file['version'],
+    true
+  );
 }
