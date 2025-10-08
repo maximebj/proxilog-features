@@ -1,5 +1,7 @@
 <?php
 
+namespace proxilogFeatures;
+
 /**
  * Plugin Name:       Proxilog Features
  * Description:       Mon premier plugin WordPress.
@@ -20,61 +22,9 @@ define('PROXILOG_FEATURES_VERSION', '0.0.1');
 define('PROXILOG_FEATURES_DIR', plugin_dir_path(__FILE__));
 define('PROXILOG_FEATURES_URL', plugin_dir_url(__FILE__));
 
-# Hooks
-add_action('admin_menu', 'proxilog_add_admin_menu');
-add_action('admin_enqueue_scripts', 'proxilog_enqueue_assets');
+# Chercher les fichiers
+include_once PROXILOG_FEATURES_DIR . 'includes/interfaces/hook.php';
+include_once PROXILOG_FEATURES_DIR . 'includes/OptionsPage.php';
 
-/**
- * Ajoute une page d'options dans l'admin WordPress
- */
-function proxilog_add_admin_menu()
-{
-  add_menu_page(
-    'Options Proxilog',                    # Titre de la page
-    'Options',                             # Titre du menu
-    'manage_options',                      # Capacité requise
-    'proxilog-options',                    # Slug du menu
-    'proxilog_options_page',               # Fonction de callback
-    'dashicons-admin-generic',             # Icône (roue dentée)
-    99                                     # Position
-  );
-}
-
-/**
- * Affiche le contenu de la page d'options
- */
-function proxilog_options_page()
-{
-?>
-  <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-  </div>
-<?php
-}
-
-
-/**
- * Enregistre et charge les scripts
- */
-function proxilog_enqueue_assets($base)
-{
-  if ($base !== 'toplevel_page_proxilog-options') {
-    return;
-  }
-
-  $file_path = PROXILOG_FEATURES_DIR . 'build/index.asset.php';
-
-  if (!file_exists($file_path)) {
-    return;
-  }
-
-  $asset_file = include $file_path;
-
-  wp_enqueue_script(
-    'proxilog-features-script',
-    PROXILOG_FEATURES_URL . 'build/index.js',
-    $asset_file['dependencies'],
-    $asset_file['version'],
-    true
-  );
-}
+# Lancer les classes
+(new OptionsPage())->registerHooks();
