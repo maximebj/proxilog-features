@@ -4,12 +4,80 @@ import {
   __experimentalHeading as Heading,
   __experimentalVStack as VStack,
   ToggleControl,
+  Button,
+  Notice,
 } from "@wordpress/components";
 
-import { useState } from "@wordpress/element";
+import { useState, useEffect } from "@wordpress/element";
+import apiFetch from "@wordpress/api-fetch";
 
 export default function SettingsPage() {
   const [isEnabled, setIsEnabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [notice, setNotice] = useState(null);
+
+  // Charger les paramètres au montage du composant
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  const loadSettings = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiFetch({
+        path: "/proxilog-features/v1/settings",
+        method: "GET",
+      });
+      setIsEnabled(response.isEnabled);
+    } catch (error) {
+      console.error("Error loading settings:", error);
+      setNotice({
+        type: "error",
+        message: __("Failed to load settings", "proxilog-features"),
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const saveSettings = async () => {
+    setIsSaving(true);
+    setNotice(null);
+
+    try {
+      const response = await apiFetch({
+        path: "/proxilog-features/v1/settings",
+        method: "POST",
+        data: {
+          isEnabled: isEnabled,
+        },
+      });
+
+      setNotice({
+        type: "success",
+        message:
+          response.message ||
+          __("Settings saved successfully", "proxilog-features"),
+      });
+    } catch (error) {
+      console.error("Error saving settings:", error);
+      setNotice({
+        type: "error",
+        message: __("Failed to save settings", "proxilog-features"),
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <VStack as="main" spacing={2} className="proxilog-content">
+        <Text>{__("Loading settings...", "proxilog-features")}</Text>
+      </VStack>
+    );
+  }
 
   return (
     <>
@@ -20,6 +88,12 @@ export default function SettingsPage() {
         </Text>
       </VStack>
       <VStack as="main" spacing={2} className="proxilog-content">
+        {notice && (
+          <Notice status={notice.type} onRemove={() => setNotice(null)}>
+            {notice.message}
+          </Notice>
+        )}
+
         <ToggleControl
           __nextHasNoMarginBottom
           checked={isEnabled}
@@ -29,6 +103,17 @@ export default function SettingsPage() {
             setIsEnabled(!isEnabled);
           }}
         />
+
+        <Button
+          variant="primary"
+          onClick={saveSettings}
+          isBusy={isSaving}
+          disabled={isSaving}
+        >
+          {isSaving
+            ? __("Saving...", "proxilog-features")
+            : __("Save Settings", "proxilog-features")}
+        </Button>
       </VStack>
     </>
   );

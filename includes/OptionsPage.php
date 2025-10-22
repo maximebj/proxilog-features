@@ -9,6 +9,8 @@ class OptionsPage implements Hook
   {
     add_action('admin_menu', [$this, 'addAdminMenu']);
     add_action('admin_enqueue_scripts', [$this, 'enqueueAssets']);
+    add_action('rest_api_init', [$this, 'registerRestRoutes']);
+    add_action('init', [$this, 'registerSettings']);
   }
 
   /**
@@ -70,5 +72,79 @@ class OptionsPage implements Hook
 
     // Enqueue WordPress components styles for proper ToggleControl appearance
     wp_enqueue_style('wp-components');
+  }
+
+  /**
+   * Enregistre les options dans WordPress
+   */
+  public function registerSettings()
+  {
+    register_setting(
+      'proxilog_features_options',
+      'proxilog_features_is_enabled',
+      [
+        'type' => 'boolean',
+        'default' => false,
+        'sanitize_callback' => 'rest_sanitize_boolean'
+      ]
+    );
+  }
+
+  /**
+   * Enregistre les routes REST
+   */
+  public function registerRestRoutes()
+  {
+    register_rest_route('proxilog-features/v1', '/settings', [
+      'methods' => 'GET',
+      'callback' => [$this, 'getSettings'],
+      'permission_callback' => [$this, 'checkPermissions']
+    ]);
+
+    register_rest_route('proxilog-features/v1', '/settings', [
+      'methods' => 'POST',
+      'callback' => [$this, 'saveSettings'],
+      'permission_callback' => [$this, 'checkPermissions'],
+      'args' => [
+        'isEnabled' => [
+          'required' => true,
+          'type' => 'boolean',
+          'sanitize_callback' => 'rest_sanitize_boolean'
+        ]
+      ]
+    ]);
+  }
+
+  /**
+   * Récupère les paramètres
+   */
+  public function getSettings()
+  {
+    return [
+      'isEnabled' => get_option('proxilog_features_is_enabled', false)
+    ];
+  }
+
+  /**
+   * Sauvegarde les paramètres
+   */
+  public function saveSettings($request)
+  {
+    $isEnabled = $request->get_param('isEnabled');
+
+    $result = update_option('proxilog_features_is_enabled', $isEnabled);
+
+    return wp_send_json_success([
+      'message' => 'Settings saved successfully',
+      'isEnabled' => $isEnabled
+    ]);
+  }
+
+  /**
+   * Vérifie les permissions
+   */
+  public function checkPermissions()
+  {
+    return current_user_can('manage_options');
   }
 }
