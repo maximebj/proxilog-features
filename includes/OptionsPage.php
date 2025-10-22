@@ -85,6 +85,7 @@ class OptionsPage implements Hook
       [
         'type' => 'boolean',
         'default' => false,
+        'show_in_rest' => true,
         'sanitize_callback' => 'rest_sanitize_boolean'
       ]
     );
