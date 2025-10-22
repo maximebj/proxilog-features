@@ -21,7 +21,7 @@ class OptionsPage implements Hook
       'Options',                             # Titre du menu
       'manage_options',                      # Capacité requise
       'proxilog-options',                    # Slug du menu
-      [$this, 'addAdminMenuPage'],      # Fonction de callback
+      [$this, 'addAdminMenuPage'],           # Fonction de callback
       'dashicons-admin-generic',             # Icône (roue dentée)
       99                                     # Position
     );
@@ -32,11 +32,7 @@ class OptionsPage implements Hook
    */
   public function addAdminMenuPage()
   {
-?>
-    <div class="wrap">
-      <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-    </div>
-<?php
+    echo '<div id="proxilog-features-root"></div>';
   }
 
 
@@ -58,11 +54,18 @@ class OptionsPage implements Hook
     $asset_file = include $file_path;
 
     wp_enqueue_script(
-      'proxilog-features-script',
+      'proxilog-features',
       PROXILOG_FEATURES_URL . 'build/index.js',
       $asset_file['dependencies'],
       $asset_file['version'],
       true
+    );
+
+    wp_enqueue_style(
+      'proxilog-features',
+      PROXILOG_FEATURES_URL . 'build/style-index.css',
+      [],
+      $asset_file['version']
     );
   }
 }
