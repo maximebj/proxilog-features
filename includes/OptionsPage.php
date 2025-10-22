@@ -67,5 +67,8 @@ class OptionsPage implements Hook
       [],
       $asset_file['version']
     );
+
+    // Enqueue WordPress components styles for proper ToggleControl appearance
+    wp_enqueue_style('wp-components');
   }
 }
