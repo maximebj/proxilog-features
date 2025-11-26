@@ -79,16 +79,16 @@ class OptionsPage implements Hook
    */
   public function registerSettings()
   {
-    register_setting(
-      'proxilog_features_options',
-      'proxilog_features_is_enabled',
-      [
-        'type' => 'boolean',
-        'default' => false,
-        'show_in_rest' => true,
-        'sanitize_callback' => 'rest_sanitize_boolean'
-      ]
-    );
+    // register_setting(
+    //   'proxilog_features_options',
+    //   'proxilog_features_is_enabled',
+    //   [
+    //     'type' => 'boolean',
+    //     'default' => false,
+    //     'show_in_rest' => true,
+    //     'sanitize_callback' => 'rest_sanitize_boolean'
+    //   ]
+    // );
   }
 
   /**
@@ -122,7 +122,7 @@ class OptionsPage implements Hook
   public function getSettings()
   {
     return [
-      'isEnabled' => get_option('proxilog_features_is_enabled', false)
+      'isEnabled' => (bool) get_option('proxilog_features_is_enabled', false)
     ];
   }
 
@@ -133,7 +133,7 @@ class OptionsPage implements Hook
   {
     $isEnabled = $request->get_param('isEnabled');
 
-    $result = update_option('proxilog_features_is_enabled', $isEnabled);
+    update_option('proxilog_features_is_enabled', $isEnabled);
 
     return wp_send_json_success([
       'message' => 'Settings saved successfully',
