@@ -25,7 +25,7 @@ class OptionsPagePhp implements Hook
       'Options PHP',                         # Titre du menu
       'manage_options',                      # Capacité requise
       $this->slug,                           # Slug du menu
-      [$this, 'addAdminMenuPage'],           # Fonction de callback
+      [$this, 'adminMenuPageController'],    # Fonction de callback
       'dashicons-admin-generic',             # Icône (roue dentée)
       99                                     # Position
     );
@@ -34,7 +34,7 @@ class OptionsPagePhp implements Hook
   /**
    * Affiche le contenu de la page d'options
    */
-  public function addAdminMenuPage()
+  public function adminMenuPageController()
   {
     $twig = TwigService::getInstance();
 

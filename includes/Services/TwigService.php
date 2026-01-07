@@ -50,17 +50,19 @@ class TwigService
     $loader = new FilesystemLoader($templatesPath);
 
     // Configuration de l'environnement Twig
+    // Désactiver le cache en développement pour voir les changements immédiatement
+    $isDebug = defined('WP_DEBUG') && WP_DEBUG;
     $options = [
-      'cache' => WP_DEBUG ? false : PROXILOG_FEATURES_DIR . 'cache/twig',
-      'debug' => WP_DEBUG,
-      'auto_reload' => WP_DEBUG,
+      'cache' => $isDebug ? false : PROXILOG_FEATURES_DIR . 'cache/twig',
+      'debug' => $isDebug,
+      'auto_reload' => true, // Toujours activer auto_reload pour détecter les changements
     ];
 
     // Créer l'environnement Twig
     $this->twig = new Environment($loader, $options);
 
     // Ajouter l'extension de debug si en mode debug
-    if (WP_DEBUG) {
+    if ($isDebug) {
       $this->twig->addExtension(new DebugExtension());
     }
 
@@ -184,6 +186,66 @@ class TwigService
   public function render(string $template, array $context = []): void
   {
     echo $this->compile($template, $context);
+  }
+
+  /**
+   * Vide le cache Twig
+   * 
+   * @return bool True si le cache a été vidé avec succès, false sinon
+   */
+  public function clearCache(): bool
+  {
+    $cacheDir = PROXILOG_FEATURES_DIR . 'cache/twig';
+
+    if (!file_exists($cacheDir)) {
+      return true; // Le cache n'existe pas, donc c'est déjà "vide"
+    }
+
+    // Supprimer récursivement tous les fichiers du cache
+    $files = new \RecursiveIteratorIterator(
+      new \RecursiveDirectoryIterator($cacheDir, \RecursiveDirectoryIterator::SKIP_DOTS),
+      \RecursiveIteratorIterator::CHILD_FIRST
+    );
+
+    foreach ($files as $fileinfo) {
+      $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+      @$todo($fileinfo->getRealPath());
+    }
+
+    // Supprimer le dossier cache lui-même
+    @rmdir($cacheDir);
+
+    // Réinitialiser l'environnement Twig pour forcer la recompilation
+    $this->init();
+
+    return true;
+  }
+
+  /**
+   * Désactive le cache Twig (utile pour le développement)
+   * 
+   * @return void
+   */
+  public function disableCache(): void
+  {
+    if ($this->twig === null) {
+      return;
+    }
+
+    // Recréer l'environnement sans cache
+    $templatesPath = PROXILOG_FEATURES_DIR . 'templates';
+    $loader = new FilesystemLoader($templatesPath);
+
+    $options = [
+      'cache' => false,
+      'debug' => true,
+      'auto_reload' => true,
+    ];
+
+    $this->twig = new Environment($loader, $options);
+    $this->twig->addExtension(new DebugExtension());
+    $this->addWordPressFilters();
+    $this->addGlobalContext();
   }
 
   /**
