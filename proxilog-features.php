@@ -31,9 +31,9 @@ if (file_exists($autoloader)) {
 # Chercher les fichiers
 include_once PROXILOG_FEATURES_DIR . 'includes/interfaces/hook.php';
 include_once PROXILOG_FEATURES_DIR . 'includes/Services/TwigService.php';
-include_once PROXILOG_FEATURES_DIR . 'includes/OptionsPageReact.php';
-include_once PROXILOG_FEATURES_DIR . 'includes/OptionsPagePhp.php';
+include_once PROXILOG_FEATURES_DIR . 'includes/Settings/Hooks/OptionsPageReact.php';
+include_once PROXILOG_FEATURES_DIR . 'includes/Settings/Hooks/OptionsPagePhp.php';
 
 # Lancer les classes
-(new OptionsPageReact())->registerHooks();
-(new OptionsPagePhp())->registerHooks();
+(new Settings\Hooks\OptionsPageReact())->registerHooks();
+(new Settings\Hooks\OptionsPagePhp())->registerHooks();

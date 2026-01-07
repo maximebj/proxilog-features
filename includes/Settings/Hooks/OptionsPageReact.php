@@ -1,6 +1,6 @@
 <?php
 
-namespace proxilogFeatures;
+namespace proxilogFeatures\Settings\Hooks;
 
 use proxilogFeatures\Interfaces\Hook;
 
@@ -8,13 +8,13 @@ use WP_Block_Editor_Context;
 
 class OptionsPageReact implements Hook
 {
+  protected $slug = 'proxilog-options-react';
 
   public function registerHooks(): void
   {
     add_action('admin_menu', [$this, 'addAdminMenu']);
     add_action('admin_enqueue_scripts', [$this, 'enqueueAssets']);
     add_action('rest_api_init', [$this, 'registerRestRoutes']);
-    add_action('init', [$this, 'registerSettings']);
   }
 
   /**
@@ -24,11 +24,11 @@ class OptionsPageReact implements Hook
   {
     add_menu_page(
       'Options Proxilog',                    # Titre de la page
-      'Options',                             # Titre du menu
+      'Options React',                       # Titre du menu
       'manage_options',                      # Capacité requise
-      'proxilog-options',                    # Slug du menu
+      $this->slug,                           # Slug du menu
       [$this, 'addAdminMenuPage'],           # Fonction de callback
-      'dashicons-admin-generic',             # Icône (roue dentée)
+      'dashicons-performance',               # Icône (roue dentée)
       99                                     # Position
     );
   }
@@ -47,7 +47,7 @@ class OptionsPageReact implements Hook
    */
   public function enqueueAssets($base)
   {
-    if ($base !== 'toplevel_page_proxilog-options') {
+    if ($base !== 'toplevel_page_' . $this->slug) {
       return;
     }
 
@@ -86,23 +86,6 @@ class OptionsPageReact implements Hook
       'editorSettings' => $editor_settings,
       'settings' => $this->getSettings()
     ]);
-  }
-
-  /**
-   * Enregistre les options dans WordPress
-   */
-  public function registerSettings()
-  {
-    // register_setting(
-    //   'proxilog_features_options',
-    //   'proxilog_features_is_enabled',
-    //   [
-    //     'type' => 'boolean',
-    //     'default' => false,
-    //     'show_in_rest' => true,
-    //     'sanitize_callback' => 'rest_sanitize_boolean'
-    //   ]
-    // );
   }
 
   /**
