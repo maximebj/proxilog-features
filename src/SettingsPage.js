@@ -42,6 +42,8 @@ export default function SettingsPage(props) {
     }).then(response => {
       setShowNotice(true);
       setIsSaving(false);
+
+      setTimeout(() => setShowNotice(false), 3000);
     });
   };
 
@@ -84,7 +86,12 @@ export default function SettingsPage(props) {
         )}
       </VStack>
       {showNotice && (
-        <Snackbar onRemove={() => setShowNotice(false)} type="success">
+        <Snackbar
+          className="proxilog-snackbar"
+          explicitDismiss={true}
+          onRemove={() => setShowNotice(false)}
+          type="success"
+        >
           {__("Settings saved.", "proxilog-features")}
         </Snackbar>
       )}

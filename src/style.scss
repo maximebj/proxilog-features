@@ -6,6 +6,11 @@
   padding: 0;
 }
 
+#proxilog-features-root {
+  position: relative;
+  height: calc(100vh - 105px);
+}
+
 .proxilog-header {
   padding: 24px 48px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -14,4 +19,11 @@
 
 .proxilog-content {
   padding: 24px 48px;
+}
+
+.proxilog-snackbar {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
 }
