@@ -1,6 +1,6 @@
 <?php
 
-namespace proxilogFeatures;
+namespace proxilogFeatures\Interfaces;
 
 interface Hook
 {

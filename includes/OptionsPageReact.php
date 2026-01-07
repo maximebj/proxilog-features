@@ -2,9 +2,11 @@
 
 namespace proxilogFeatures;
 
+use proxilogFeatures\Interfaces\Hook;
+
 use WP_Block_Editor_Context;
 
-class OptionsPage implements Hook
+class OptionsPageReact implements Hook
 {
 
   public function registerHooks(): void

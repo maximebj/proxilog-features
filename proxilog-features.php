@@ -18,13 +18,22 @@ namespace proxilogFeatures;
 defined('ABSPATH') || exit;
 
 # Constantes 
-define('PROXILOG_FEATURES_VERSION', '0.0.1');
+define('PROXILOG_FEATURES_VERSION', '0.0.2');
 define('PROXILOG_FEATURES_DIR', plugin_dir_path(__FILE__));
 define('PROXILOG_FEATURES_URL', plugin_dir_url(__FILE__));
 
+# Charger l'autoloader Composer
+$autoloader = PROXILOG_FEATURES_DIR . 'vendor/autoload.php';
+if (file_exists($autoloader)) {
+  require_once $autoloader;
+}
+
 # Chercher les fichiers
 include_once PROXILOG_FEATURES_DIR . 'includes/interfaces/hook.php';
-include_once PROXILOG_FEATURES_DIR . 'includes/OptionsPage.php';
+include_once PROXILOG_FEATURES_DIR . 'includes/Services/TwigService.php';
+include_once PROXILOG_FEATURES_DIR . 'includes/OptionsPageReact.php';
+include_once PROXILOG_FEATURES_DIR . 'includes/OptionsPagePhp.php';
 
 # Lancer les classes
-(new OptionsPage())->registerHooks();
+(new OptionsPageReact())->registerHooks();
+(new OptionsPagePhp())->registerHooks();
