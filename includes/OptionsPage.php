@@ -126,6 +126,11 @@ class OptionsPage implements Hook
           'required' => true,
           'type' => 'string',
           'sanitize_callback' => 'sanitize_text_field'
+        ],
+        'color' => [
+          'required' => true,
+          'type' => 'string',
+          'sanitize_callback' => 'sanitize_hex_color'
         ]
       ]
     ]);
@@ -141,6 +146,7 @@ class OptionsPage implements Hook
       'text' => get_option('proxilog_features_text', ''),
       'range' => (int) get_option('proxilog_features_range', 0),
       'position' => get_option('proxilog_features_position', 'justify'),
+      'color' => get_option('proxilog_features_color', '#219ebc'),
     ];
   }
 
@@ -153,17 +159,20 @@ class OptionsPage implements Hook
     $text = $request->get_param('text');
     $range = $request->get_param('range');
     $position = $request->get_param('position');
+    $color = $request->get_param('color');
 
     update_option('proxilog_features_is_enabled', $isEnabled);
     update_option('proxilog_features_text', $text);
     update_option('proxilog_features_range', $range);
     update_option('proxilog_features_position', $position);
+    update_option('proxilog_features_color', $color);
 
     return wp_send_json_success([
       'isEnabled' => $isEnabled,
       'text' => $text,
       'range' => $range,
-      'position' => $position
+      'position' => $position,
+      'color' => $color
     ]);
   }
 

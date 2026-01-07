@@ -7,6 +7,7 @@ import {
   __experimentalHStack as HStack,
   __experimentalToggleGroupControl as ToggleGroupControl,
   __experimentalToggleGroupControlOption as ToggleGroupControlOption,
+  ColorPalette,
   TextControl,
   ToggleControl,
   RangeControl,
@@ -51,6 +52,12 @@ export default function SettingsPage(props) {
       setTimeout(() => setShowNotice(false), 3000);
     });
   };
+
+  const colors = [
+    { name: "red", color: "#f00" },
+    { name: "white", color: "#fff" },
+    { name: "blue", color: "#00f" },
+  ];
 
   return (
     <>
@@ -137,6 +144,17 @@ export default function SettingsPage(props) {
               <ToggleGroupControlOption label="Right" value="right" />
               <ToggleGroupControlOption label="Justify" value="justify" />
             </ToggleGroupControl>
+
+            <ColorPalette
+              colors={colors}
+              value={settings.color}
+              onChange={value => {
+                setSettings({
+                  ...settings,
+                  color: value,
+                });
+              }}
+            />
           </VStack>
         ) : (
           <Spinner />
