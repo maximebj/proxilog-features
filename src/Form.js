@@ -12,7 +12,7 @@ import { __ } from "@wordpress/i18n";
 export default function Form(props) {
   const { settings, onChange } = props;
 
-  const colors = [
+  const colors = window.proxilogFeatures.editorSettings.colors || [
     { name: "red", color: "#f00" },
     { name: "white", color: "#fff" },
     { name: "blue", color: "#00f" },

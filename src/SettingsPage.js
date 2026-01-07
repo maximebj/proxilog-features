@@ -20,16 +20,22 @@ export default function SettingsPage(props) {
 
   // Charger uniquement les settings lorsque le composant est chargé
   useEffect(() => {
-    apiFetch({
-      path: "/proxilog-features/v1/settings",
-      method: "GET",
-    })
-      .then(response => {
-        setSettings(response);
+    // On récupère les settings depuis le JS localisé
+    if (window.proxilogFeatures.settings) {
+      setSettings(window.proxilogFeatures.settings);
+      // Sinon on récupère les settings depuis l'API REST
+    } else {
+      apiFetch({
+        path: "/proxilog-features/v1/settings",
+        method: "GET",
       })
-      .catch(error => {
-        console.error("Error loading settings:", error);
-      });
+        .then(response => {
+          setSettings(response);
+        })
+        .catch(error => {
+          console.error("Error loading settings:", error);
+        });
+    }
   }, []);
 
   // Gestion de l'enregistrement des settings

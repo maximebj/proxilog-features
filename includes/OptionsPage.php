@@ -2,6 +2,8 @@
 
 namespace proxilogFeatures;
 
+use WP_Block_Editor_Context;
+
 class OptionsPage implements Hook
 {
 
@@ -72,6 +74,16 @@ class OptionsPage implements Hook
 
     // Enqueue WordPress components styles for proper ToggleControl appearance
     wp_enqueue_style('wp-components');
+
+    // Envoyer les réglages de l'éditeur en JS
+    $custom_settings = [];
+    $block_editor_context = new WP_Block_Editor_Context(['name' => 'modern-fields']);
+    $editor_settings = get_block_editor_settings($custom_settings, $block_editor_context);
+
+    wp_localize_script('proxilog-features', 'proxilogFeatures', [
+      'editorSettings' => $editor_settings,
+      'settings' => $this->getSettings()
+    ]);
   }
 
   /**
