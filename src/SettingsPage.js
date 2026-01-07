@@ -5,7 +5,11 @@ import {
   __experimentalHeading as Heading,
   __experimentalVStack as VStack,
   __experimentalHStack as HStack,
+  __experimentalToggleGroupControl as ToggleGroupControl,
+  __experimentalToggleGroupControlOption as ToggleGroupControlOption,
+  TextControl,
   ToggleControl,
+  RangeControl,
   Button,
   Spinner,
   Snackbar,
@@ -14,6 +18,7 @@ import { useState, useEffect } from "@wordpress/element";
 
 export default function SettingsPage(props) {
   const [settings, setSettings] = useState(null);
+  console.log(settings);
   const [isSaving, setIsSaving] = useState(false);
   const [showNotice, setShowNotice] = useState(false);
 
@@ -69,18 +74,70 @@ export default function SettingsPage(props) {
       </HStack>
       <VStack as="main" spacing={2} className="proxilog-content">
         {settings ? (
-          <ToggleControl
-            checked={settings.isEnabled}
-            label={__("Enable something", "proxilog-features")}
-            help={__("This is a help text", "proxilog-features")}
-            onChange={() => {
-              setSettings({
-                ...settings,
-                isEnabled: !settings.isEnabled || false,
-              });
-            }}
-            __nextHasNoMarginBottom
-          />
+          <VStack spacing={8} className="proxilog-content-form">
+            <ToggleControl
+              checked={settings.isEnabled}
+              label={__("Enable something", "proxilog-features")}
+              help={__("This is a help text", "proxilog-features")}
+              onChange={() => {
+                setSettings({
+                  ...settings,
+                  isEnabled: !settings.isEnabled || false,
+                });
+              }}
+              __nextHasNoMarginBottom
+            />
+
+            <TextControl
+              __next40pxDefaultSize
+              __nextHasNoMarginBottom
+              onChange={value => {
+                setSettings({
+                  ...settings,
+                  text: value,
+                });
+              }}
+              label="Champ texte"
+              type="text"
+              value={settings.text}
+              help="Le titre à afficher dans la section"
+            />
+
+            <RangeControl
+              __next40pxDefaultSize
+              __nextHasNoMarginBottom
+              help="Please select how transparent you would like this."
+              initialPosition={settings.range}
+              label="Opacity"
+              min={0}
+              max={100}
+              onChange={value => {
+                setSettings({
+                  ...settings,
+                  range: value,
+                });
+              }}
+            />
+
+            <ToggleGroupControl
+              __next40pxDefaultSize
+              __nextHasNoMarginBottom
+              isBlock
+              label="Label"
+              value={settings.position}
+              onChange={value => {
+                setSettings({
+                  ...settings,
+                  position: value,
+                });
+              }}
+            >
+              <ToggleGroupControlOption label="Left" value="left" />
+              <ToggleGroupControlOption label="Center" value="center" />
+              <ToggleGroupControlOption label="Right" value="right" />
+              <ToggleGroupControlOption label="Justify" value="justify" />
+            </ToggleGroupControl>
+          </VStack>
         ) : (
           <Spinner />
         )}

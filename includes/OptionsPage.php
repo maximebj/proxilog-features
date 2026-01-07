@@ -111,6 +111,21 @@ class OptionsPage implements Hook
           'required' => true,
           'type' => 'boolean',
           'sanitize_callback' => 'rest_sanitize_boolean'
+        ],
+        'text' => [
+          'required' => true,
+          'type' => 'string',
+          'sanitize_callback' => 'sanitize_text_field'
+        ],
+        'range' => [
+          'required' => true,
+          'type' => 'integer',
+          'sanitize_callback' => 'absint'
+        ],
+        'position' => [
+          'required' => true,
+          'type' => 'string',
+          'sanitize_callback' => 'sanitize_text_field'
         ]
       ]
     ]);
@@ -122,7 +137,10 @@ class OptionsPage implements Hook
   public function getSettings()
   {
     return [
-      'isEnabled' => (bool) get_option('proxilog_features_is_enabled', false)
+      'isEnabled' => (bool) get_option('proxilog_features_is_enabled', false),
+      'text' => get_option('proxilog_features_text', ''),
+      'range' => (int) get_option('proxilog_features_range', 0),
+      'position' => get_option('proxilog_features_position', 'justify'),
     ];
   }
 
@@ -132,12 +150,20 @@ class OptionsPage implements Hook
   public function saveSettings($request)
   {
     $isEnabled = $request->get_param('isEnabled');
+    $text = $request->get_param('text');
+    $range = $request->get_param('range');
+    $position = $request->get_param('position');
 
     update_option('proxilog_features_is_enabled', $isEnabled);
+    update_option('proxilog_features_text', $text);
+    update_option('proxilog_features_range', $range);
+    update_option('proxilog_features_position', $position);
 
     return wp_send_json_success([
-      'message' => 'Settings saved successfully',
-      'isEnabled' => $isEnabled
+      'isEnabled' => $isEnabled,
+      'text' => $text,
+      'range' => $range,
+      'position' => $position
     ]);
   }
 
