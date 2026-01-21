@@ -13,6 +13,7 @@ class OptionsPagePhp implements Hook
   {
     add_action('admin_menu', [$this, 'addAdminMenu']);
     add_action('admin_init', [$this, 'registerSettings']);
+    add_action('admin_post_proxilog_update_settings', [$this, 'updateSettings']);
   }
 
   /**
@@ -40,6 +41,7 @@ class OptionsPagePhp implements Hook
 
     $context = [
       'settings' => $this->getSettings(),
+      'settings_updated' => isset($_GET['settings_updated']) && $_GET['settings_updated'] === 'true',
     ];
 
     $twig->render('admin/options-page-php.twig', $context);
@@ -61,6 +63,40 @@ class OptionsPagePhp implements Hook
     //     'sanitize_callback' => 'rest_sanitize_boolean'
     //   ]
     // );
+  }
+
+  /** 
+   * Met à jour les paramètres via $_POST
+   */
+  public function updateSettings()
+  {
+    // Validation du nonce
+    if (!wp_verify_nonce($_POST['_wpnonce'], 'proxilog_update_settings')) {
+      wp_die('Formulaire invalide');
+    }
+
+    // Vérifie le rôle utilisateur 
+    if (!current_user_can('manage_options')) {
+      wp_die('Vous ne pouvez pas modifier les paramètres');
+    }
+
+    // Récupération et sanitization des paramètres
+    $isEnabled = isset($_POST['isEnabled']) ? true : false;
+    $text = isset($_POST['text']) ? sanitize_text_field($_POST['text']) : '';
+    $range = isset($_POST['range']) ? absint($_POST['range']) : 0;
+    $position = isset($_POST['position']) ? sanitize_text_field($_POST['position']) : '';
+    $color = isset($_POST['color']) ? sanitize_hex_color($_POST['color']) : '';
+
+    // Mise à jour des paramètres
+    update_option('proxilog_features_is_enabled', $isEnabled);
+    update_option('proxilog_features_text', $text);
+    update_option('proxilog_features_range', $range);
+    update_option('proxilog_features_position', $position);
+    update_option('proxilog_features_color', $color);
+
+    // Redirection vers la page d'options
+    wp_redirect(admin_url('admin.php?page=' . $this->slug . '&settings_updated=true'));
+    exit;
   }
 
   /**

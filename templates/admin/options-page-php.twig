@@ -1,17 +1,57 @@
 <div class="wrap proxilog-features-admin-page">
   <h1>{{ wp_get_bloginfo('name') }} - Options Proxilog</h1>
   
+  {% if settings_updated %}
+    <div id="setting-error-settings_updated" class="notice notice-success settings-error is-dismissible"> 
+      <p>
+        <strong>Réglages enregistrés.</strong>
+      </p>
+    </div>
+  {% endif %}
+
+  <form method="post" action="{{ wp_admin_url('admin-post.php') }}">
+    {{ wp_nonce_field('proxilog_update_settings') }}
+    <input type="hidden" name="action" value="proxilog_update_settings">
+    
+    <p>
+      <label for="isEnabled">Activé</label>
+      <input type="checkbox" name="isEnabled" value="1" {{ settings.isEnabled ? 'checked' : '' }}>
+    </p>
+
+    <p>
+      <label for="text">Texte</label>
+      <input type="text" name="text" value="{{ settings.text }}">
+    </p>
+
+    <p>
+      <label for="range">Opacité</label>
+      <input type="number" name="range" min="0" max="100" value="{{ settings.range }}">
+    </p>
+
+    <p>
+      <label for="position">Position</label>
+      <select name="position" id="position">
+        <option value="left" {{ settings.position == 'left' ? 'selected' : '' }}>Left</option>
+        <option value="center" {{ settings.position == 'center' ? 'selected' : '' }}>Center</option>
+        <option value="right" {{ settings.position == 'right' ? 'selected' : '' }}>Right</option>
+        <option value="justify" {{ settings.position == 'justify' ? 'selected' : '' }}>Justify</option>
+      </select>
+    </p>
+
+    <p>
+      <label for="color">Couleur</label>
+      <input type="color" name="color" value="{{ settings.color }}">
+    </p>
+
+    <p class="submit">
+      <input type="submit" name="submit" class="button button-primary" value="Enregistrer les modifications">
+    </p>
+  </form>
+
   <div class="proxilog-features-header">
     <p class="description">
       Version {{ constants.PROXILOG_FEATURES_VERSION }}
     </p>
   </div>
-
-  Settings COUCOU : 
-  <p>{{settings.text}}</p>
-  <p>{{settings.range}}</p>
-  <p>{{settings.position}}</p>
-  <p>{{settings.color}}</p>
-  <p>{{settings.isEnabled}}</p>
 </div>
 
