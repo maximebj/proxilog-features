@@ -108,7 +108,7 @@ class TwigService
 
     $this->twig->addFunction(new TwigFunction('wp_nonce_field', function ($action = -1, $name = '_wpnonce', $referer = true, $echo = false) {
       return wp_nonce_field($action, $name, $referer, $echo);
-    }));
+    }, ['is_safe' => ['html']]));
 
     $this->twig->addFunction(new TwigFunction('wp_create_nonce', function ($action = -1) {
       return wp_create_nonce($action);
