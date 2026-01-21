@@ -9,27 +9,27 @@
     </div>
   {% endif %}
 
-  <form method="post" action="{{ wp_admin_url('admin-post.php') }}">
+  <form method="post" action="{{ wp_admin_url('admin-post.php') }}" class="flex flex-col gap-6">
     {{ wp_nonce_field('proxilog_update_settings') }}
     <input type="hidden" name="action" value="proxilog_update_settings">
     
-    <p>
-      <label for="isEnabled">Activé</label>
+    <p class="flex items-center">
+      <label for="isEnabled" class="font-bold w-24">Activé</label>
       <input type="checkbox" name="isEnabled" value="1" {{ settings.isEnabled ? 'checked' : '' }}>
     </p>
 
-    <p>
-      <label for="text">Texte</label>
+    <p class="flex items-center">
+      <label for="text" class="font-bold w-24">Texte</label>
       <input type="text" name="text" value="{{ settings.text }}">
     </p>
 
-    <p>
-      <label for="range">Opacité</label>
+    <p class="flex items-center">
+      <label for="range" class="font-bold w-24">Opacité</label>
       <input type="number" name="range" min="0" max="100" value="{{ settings.range }}">
     </p>
 
-    <p>
-      <label for="position">Position</label>
+    <p class="flex items-center">
+      <label for="position" class="font-bold w-24">Position</label>
       <select name="position" id="position">
         <option value="left" {{ settings.position == 'left' ? 'selected' : '' }}>Left</option>
         <option value="center" {{ settings.position == 'center' ? 'selected' : '' }}>Center</option>
@@ -38,20 +38,20 @@
       </select>
     </p>
 
-    <p>
-      <label for="color">Couleur</label>
+    <p class="flex items-center">
+      <label for="color" class="font-bold w-24">Couleur</label>
       <input type="color" name="color" value="{{ settings.color }}">
     </p>
 
-    <p class="submit">
+    <p>
       <input type="submit" name="submit" class="button button-primary" value="Enregistrer les modifications">
     </p>
-  </form>
 
-  <div class="proxilog-features-header">
-    <p class="description">
-      Version {{ constants.PROXILOG_FEATURES_VERSION }}
-    </p>
-  </div>
+    <div class="proxilog-features-header">
+      <p class="description">
+        Version {{ constants.PROXILOG_FEATURES_VERSION }}
+      </p>
+    </div>
+  </form>
 </div>
 
