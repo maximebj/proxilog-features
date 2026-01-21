@@ -6,6 +6,9 @@ use proxilogFeatures\Interfaces\Hook;
 
 use WP_Block_Editor_Context;
 
+# Sécurité
+defined('ABSPATH') || exit;
+
 class OptionsPageReact implements Hook
 {
   protected $slug = 'proxilog-options-react';

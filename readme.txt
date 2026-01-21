@@ -2,17 +2,17 @@
 Contributors: maxime-bernard-jacquet
 Tags: admin, options, customization, agency
 Requires at least: 6.8
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 8.0
 Stable tag: 0.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Extension WordPress personnalisée développée par une agence pour ajouter des options d'administration à WordPress.
+Custom WordPress extension developed by an agency to add administration options to WordPress.
 
 == Description ==
 
-Proxilog Features est une extension WordPress personnalisée conçue par une agence pour ses clients. Elle permet d'ajouter facilement des options d'administration personnalisées dans le tableau de bord WordPress.
+Proxilog Features is a custom WordPress plugin developed by an agency for its clients. It allows you to easily add custom administration options to the WordPress dashboard.
 
 = Fonctionnalités principales =
 

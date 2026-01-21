@@ -7,6 +7,7 @@ use Twig\Loader\FilesystemLoader;
 use Twig\Extension\DebugExtension;
 use Twig\TwigFunction;
 use Twig\TwigFilter;
+use WP_Error;
 
 class TwigService
 {
@@ -165,14 +166,11 @@ class TwigService
     try {
       return $this->twig->render($template, $context);
     } catch (\Twig\Error\LoaderError $e) {
-      error_log('Erreur Twig Loader: ' . $e->getMessage());
-      return '<div class="error"><p>Erreur de chargement du template: ' . esc_html($e->getMessage()) . '</p></div>';
+      throw new WP_Error('twig_loader_error', 'Erreur Twig Loader: ' . esc_html($e->getMessage()));
     } catch (\Twig\Error\RuntimeError $e) {
-      error_log('Erreur Twig Runtime: ' . $e->getMessage());
-      return '<div class="error"><p>Erreur d\'exécution du template: ' . esc_html($e->getMessage()) . '</p></div>';
+      throw new WP_Error('twig_runtime_error', 'Erreur Twig Runtime: ' . esc_html($e->getMessage()));
     } catch (\Twig\Error\SyntaxError $e) {
-      error_log('Erreur Twig Syntax: ' . $e->getMessage());
-      return '<div class="error"><p>Erreur de syntaxe du template: ' . esc_html($e->getMessage()) . '</p></div>';
+      throw new WP_Error('twig_syntax_error', 'Erreur Twig Syntax: ' . esc_html($e->getMessage()));
     }
   }
 
@@ -213,7 +211,12 @@ class TwigService
     }
 
     // Supprimer le dossier cache lui-même
-    @rmdir($cacheDir);
+    global $wp_filesystem;
+    if (empty($wp_filesystem)) {
+      require_once ABSPATH . '/wp-admin/includes/file.php';
+      WP_Filesystem();
+    }
+    $wp_filesystem->rmdir($cacheDir);
 
     // Réinitialiser l'environnement Twig pour forcer la recompilation
     $this->init();

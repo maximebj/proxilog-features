@@ -5,6 +5,9 @@ namespace proxilogFeatures\Settings\Hooks;
 use proxilogFeatures\Interfaces\Hook;
 use proxilogFeatures\Services\TwigService;
 
+# Sécurité
+defined('ABSPATH') || exit;
+
 class OptionsPagePhp implements Hook
 {
   protected $slug = 'proxilog-options-php';
@@ -53,7 +56,13 @@ class OptionsPagePhp implements Hook
   public function updateSettings()
   {
     // Validation du nonce
-    if (!wp_verify_nonce($_POST['_wpnonce'], 'proxilog_update_settings')) {
+    if (!isset($_POST['_wpnonce'])) {
+      wp_die('Formulaire invalide');
+    }
+
+    $nonce = sanitize_text_field(wp_unslash($_POST['_wpnonce']));
+
+    if (!wp_verify_nonce($nonce, 'proxilog_update_settings')) {
       wp_die('Formulaire invalide');
     }
 
@@ -64,10 +73,10 @@ class OptionsPagePhp implements Hook
 
     // Récupération et sanitization des paramètres
     $isEnabled = isset($_POST['isEnabled']) ? true : false;
-    $text = isset($_POST['text']) ? sanitize_text_field($_POST['text']) : '';
+    $text = isset($_POST['text']) ? sanitize_text_field(wp_unslash($_POST['text'])) : '';
     $range = isset($_POST['range']) ? absint($_POST['range']) : 0;
-    $position = isset($_POST['position']) ? sanitize_text_field($_POST['position']) : '';
-    $color = isset($_POST['color']) ? sanitize_hex_color($_POST['color']) : '';
+    $position = isset($_POST['position']) ? sanitize_text_field(wp_unslash($_POST['position'])) : '';
+    $color = isset($_POST['color']) ? sanitize_hex_color(wp_unslash($_POST['color'])) : '';
 
     // Si on voulait envoyer les données à un autre site, on pourrait utiliser cette méthode
     /*
@@ -90,7 +99,7 @@ class OptionsPagePhp implements Hook
     update_option('proxilog_features_color', $color);
 
     // Redirection vers la page d'options
-    wp_redirect(admin_url('admin.php?page=' . $this->slug . '&settings_updated=true'));
+    wp_safe_redirect(admin_url('admin.php?page=' . $this->slug . '&settings_updated=true'));
     exit;
   }
 

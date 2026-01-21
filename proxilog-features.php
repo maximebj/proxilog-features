@@ -23,9 +23,9 @@ define('PROXILOG_FEATURES_DIR', plugin_dir_path(__FILE__));
 define('PROXILOG_FEATURES_URL', plugin_dir_url(__FILE__));
 
 # Charger l'autoloader Composer
-$autoloader = PROXILOG_FEATURES_DIR . 'vendor/autoload.php';
-if (file_exists($autoloader)) {
-  require_once $autoloader;
+$proxilog_features_autoloader = PROXILOG_FEATURES_DIR . 'vendor/autoload.php';
+if (file_exists($proxilog_features_autoloader)) {
+  require_once $proxilog_features_autoloader;
 }
 
 # Chercher les fichiers
