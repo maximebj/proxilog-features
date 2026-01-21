@@ -12,6 +12,8 @@
   <form method="post" action="{{ wp_admin_url('admin-post.php') }}" class="flex flex-col gap-6">
     {{ wp_nonce_field('proxilog_update_settings') }}
     <input type="hidden" name="action" value="proxilog_update_settings">
+
+    <p>Afficher une valeur échappée : {{ settings.text|esc_html }}</p>
     
     <p class="flex items-center">
       <label for="isEnabled" class="font-bold w-24">Activé</label>
