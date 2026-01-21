@@ -158,6 +158,20 @@ class OptionsPageReact implements Hook
     $position = $request->get_param('position');
     $color = $request->get_param('color');
 
+    // Si on voulait envoyer les données à un autre site, on pourrait utiliser cette méthode
+    /*
+    wp_remote_post(
+      'https://www.monapp.fr/api/v1/settings',
+      [
+        'method' => 'POST',
+        'body' => json_encode([
+          'isEnabled' => $isEnabled,
+        ])
+      ]
+    );
+    */
+
+    // On enregistre les paramètres dans la base de données
     update_option('proxilog_features_is_enabled', $isEnabled);
     update_option('proxilog_features_text', $text);
     update_option('proxilog_features_range', $range);
