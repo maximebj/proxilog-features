@@ -1,0 +1,106 @@
+/* Proxilog Dashboard Metabox Styles */
+
+.proxilog-form-container {
+  padding: 15px 0;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.proxilog-form-container h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d2327;
+}
+
+.proxilog-contact-form .form-group {
+  margin-bottom: 15px;
+}
+
+.proxilog-contact-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #1d2327;
+}
+
+.proxilog-contact-form input[type="text"],
+.proxilog-contact-form input[type="email"],
+.proxilog-contact-form input[type="tel"] {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #8c8f94;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.proxilog-contact-form input:focus {
+  border-color: #2271b1;
+  outline: none;
+  box-shadow: 0 0 0 1px #2271b1;
+}
+
+.proxilog-data-container {
+  margin-top: 20px;
+}
+
+.proxilog-data-container h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d2327;
+}
+
+.proxilog-data-container table {
+  margin-top: 10px;
+  background: #fff;
+  border: 1px solid #c3c4c7;
+}
+
+.proxilog-data-container table th {
+  font-weight: 600;
+  text-align: left;
+  padding: 8px 10px;
+  background: #f6f7f7;
+  border-bottom: 1px solid #c3c4c7;
+}
+
+.proxilog-data-container table td {
+  padding: 8px 10px;
+  border-top: 1px solid #c3c4c7;
+}
+
+.proxilog-no-data {
+  padding: 20px;
+  background: #f6f7f7;
+  border: 1px solid #c3c4c7;
+  border-radius: 4px;
+  text-align: center;
+  color: #646970;
+}
+
+.proxilog-no-data p {
+  margin: 0;
+  font-style: italic;
+}
+
+/* Messages de notification dans la metabox */
+#proxilog_contact_widget .notice {
+  margin: 0 0 15px 0;
+  padding: 10px 15px;
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+  .proxilog-data-container table {
+    font-size: 13px;
+  }
+  
+  .proxilog-data-container table th,
+  .proxilog-data-container table td {
+    padding: 6px 8px;
+  }
+}
