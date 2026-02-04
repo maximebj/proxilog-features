@@ -3,6 +3,7 @@
 namespace proxilogFeatures\Dashboard\Hooks;
 
 use proxilogFeatures\Interfaces\Hook;
+use proxilogFeatures\Services\TwigService;
 
 # Sécurité
 defined('ABSPATH') || exit;
@@ -12,7 +13,7 @@ class DashboardMetabox implements Hook
   public function registerHooks(): void
   {
     add_action('wp_dashboard_setup', [$this, 'addDashboardMetabox']);
-    add_action('admin_init', [$this, 'handleFormSubmission']);
+    add_action('admin_post_proxilog_add_contact', [$this, 'handleFormSubmission']);
     add_action('admin_enqueue_scripts', [$this, 'enqueueStyles']);
   }
 
@@ -51,15 +52,10 @@ class DashboardMetabox implements Hook
    */
   public function handleFormSubmission(): void
   {
-    // Vérifier si le formulaire a été soumis
-    if (!isset($_POST['proxilog_contact_submit'])) {
-      return;
-    }
-
     // Vérifier le nonce
     if (
-      !isset($_POST['proxilog_contact_nonce']) ||
-      !wp_verify_nonce($_POST['proxilog_contact_nonce'], 'proxilog_contact_action')
+      !isset($_POST['_wpnonce']) ||
+      !wp_verify_nonce($_POST['_wpnonce'], 'proxilog_add_contact')
     ) {
       wp_die('Action non autorisée');
     }
@@ -78,26 +74,21 @@ class DashboardMetabox implements Hook
     $errors = [];
 
     if (empty($name)) {
-      $errors[] = 'Le nom est requis';
+      $errors[] = 'Le nom est requis.';
     }
 
     if (empty($email) || !is_email($email)) {
-      $errors[] = 'Un email valide est requis';
+      $errors[] = 'Un email valide est requis.';
     }
 
     if (empty($phone)) {
-      $errors[] = 'Le téléphone est requis';
+      $errors[] = 'Le téléphone est requis.';
     }
 
     if (!empty($errors)) {
-      add_settings_error(
-        'proxilog_contact',
-        'proxilog_contact_error',
-        implode('<br>', $errors),
-        'error'
-      );
       set_transient('proxilog_contact_errors', $errors, 45);
-      return;
+      wp_redirect(admin_url('index.php'));
+      exit;
     }
 
     // Insérer dans la base de données
@@ -115,24 +106,11 @@ class DashboardMetabox implements Hook
     );
 
     if ($result !== false) {
-      add_settings_error(
-        'proxilog_contact',
-        'proxilog_contact_success',
-        'Contact enregistré avec succès !',
-        'success'
-      );
       set_transient('proxilog_contact_success', true, 45);
     } else {
-      add_settings_error(
-        'proxilog_contact',
-        'proxilog_contact_error',
-        'Erreur lors de l\'enregistrement',
-        'error'
-      );
       set_transient('proxilog_contact_errors', ['Erreur lors de l\'enregistrement'], 45);
     }
 
-    // Rediriger pour éviter la double soumission
     wp_redirect(admin_url('index.php'));
     exit;
   }
@@ -142,23 +120,31 @@ class DashboardMetabox implements Hook
    */
   public function renderMetabox(): void
   {
+    $twig = TwigService::getInstance();
+
     // Afficher les messages
     if (get_transient('proxilog_contact_success')) {
-      echo '<div class="notice notice-success is-dismissible"><p>Contact enregistré avec succès !</p></div>';
+      $twig->render('admin/notice.twig', [
+        'message' => 'Contact enregistré avec succès !',
+        'type' => 'success',
+      ]);
       delete_transient('proxilog_contact_success');
     }
 
     $errors = get_transient('proxilog_contact_errors');
     if ($errors) {
-      echo '<div class="notice notice-error is-dismissible"><p>' . implode('<br>', $errors) . '</p></div>';
+      $twig->render('admin/notice.twig', [
+        'message' => implode(' ', $errors),
+        'type' => 'error',
+      ]);
       delete_transient('proxilog_contact_errors');
     }
 
-    // Afficher le formulaire
-    $this->renderForm();
-
     // Afficher le tableau des données
     $this->renderDataTable();
+
+    // Afficher le formulaire
+    $this->renderForm();
   }
 
   /**
@@ -166,48 +152,8 @@ class DashboardMetabox implements Hook
    */
   private function renderForm(): void
   {
-?>
-    <div class="proxilog-form-container">
-      <h3>Ajouter un contact</h3>
-      <form method="post" action="" class="proxilog-contact-form">
-        <?php wp_nonce_field('proxilog_contact_action', 'proxilog_contact_nonce'); ?>
-
-        <div class="form-group">
-          <label for="proxilog_name">Nom *</label>
-          <input
-            type="text"
-            id="proxilog_name"
-            name="proxilog_name"
-            class="widefat"
-            required />
-        </div>
-
-        <div class="form-group">
-          <label for="proxilog_email">Email *</label>
-          <input
-            type="email"
-            id="proxilog_email"
-            name="proxilog_email"
-            class="widefat"
-            required />
-        </div>
-
-        <div class="form-group">
-          <label for="proxilog_phone">Téléphone *</label>
-          <input
-            type="tel"
-            id="proxilog_phone"
-            name="proxilog_phone"
-            class="widefat"
-            required />
-        </div>
-
-        <div class="form-group">
-          <?php submit_button('Enregistrer le contact', 'primary', 'proxilog_contact_submit', false); ?>
-        </div>
-      </form>
-    </div>
-  <?php
+    $twig = TwigService::getInstance();
+    $twig->render('admin/dashboard-metabox-form.twig');
   }
 
   /**
@@ -219,35 +165,13 @@ class DashboardMetabox implements Hook
     $table_name = $wpdb->prefix . 'proxilog';
 
     // Récupérer les données
-    $contacts = $wpdb->get_results("SELECT * FROM $table_name ORDER BY id DESC");
+    $sql = $wpdb->prepare("SELECT * FROM %i ORDER BY id DESC", $table_name);
+    $contacts = $wpdb->get_results($sql);
 
-    if (empty($contacts)) {
-      echo '<div class="proxilog-no-data"><p>Aucun contact enregistré pour le moment.</p></div>';
-      return;
-    }
-
-  ?>
-    <div class="proxilog-data-container">
-      <h3>Contacts enregistrés (<?php echo count($contacts); ?>)</h3>
-      <table class="wp-list-table widefat fixed striped">
-        <thead>
-          <tr>
-            <th width="30%">Nom</th>
-            <th width="40%">Email</th>
-            <th width="30%">Téléphone</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($contacts as $contact): ?>
-            <tr>
-              <td><?php echo esc_html($contact->name); ?></td>
-              <td><?php echo esc_html($contact->email); ?></td>
-              <td><?php echo esc_html($contact->phone); ?></td>
-            </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
-    </div>
-<?php
+    // Afficher le tableau des données
+    $twig = TwigService::getInstance();
+    $twig->render('admin/dashboard-metabox-clients-table.twig', [
+      'contacts' => $contacts,
+    ]);
   }
 }

@@ -2,8 +2,6 @@
 
 .proxilog-form-container {
   padding: 15px 0;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 20px;
 }
 
 .proxilog-form-container h3 {
@@ -43,7 +41,7 @@
 }
 
 .proxilog-data-container {
-  margin-top: 20px;
+  margin: 20px 0;
 }
 
 .proxilog-data-container h3 {
@@ -64,7 +62,6 @@
   font-weight: 600;
   text-align: left;
   padding: 8px 10px;
-  background: #f6f7f7;
   border-bottom: 1px solid #c3c4c7;
 }
 

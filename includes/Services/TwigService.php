@@ -123,7 +123,7 @@ class TwigService
       return get_current_user_id();
     }));
 
-    $this->twig->addFunction(new TwigFunction('submit_button', function ($text = 'Enregistrer les modifications', $type = 'primary', $name = '', $wrap = false, $other_attributes = []) {
+    $this->twig->addFunction(new TwigFunction('wp_submit_button', function ($text = 'Enregistrer les modifications', $type = 'primary', $name = '', $wrap = false, $other_attributes = []) {
       return submit_button($text, $type, $name, $wrap, $other_attributes);
     }));
   }
@@ -170,11 +170,11 @@ class TwigService
     try {
       return $this->twig->render($template, $context);
     } catch (\Twig\Error\LoaderError $e) {
-      throw new WP_Error('twig_loader_error', 'Erreur Twig Loader: ' . esc_html($e->getMessage()));
+      throw new \RuntimeException('Erreur Twig Loader: ' . $e->getMessage(), 0, $e);
     } catch (\Twig\Error\RuntimeError $e) {
-      throw new WP_Error('twig_runtime_error', 'Erreur Twig Runtime: ' . esc_html($e->getMessage()));
+      throw new \RuntimeException('Erreur Twig Runtime: ' . $e->getMessage(), 0, $e);
     } catch (\Twig\Error\SyntaxError $e) {
-      throw new WP_Error('twig_syntax_error', 'Erreur Twig Syntax: ' . esc_html($e->getMessage()));
+      throw new \RuntimeException('Erreur Twig Syntax: ' . $e->getMessage(), 0, $e);
     }
   }
 

@@ -1,0 +1,27 @@
+{% if contacts is empty %}
+  <div class="proxilog-no-data">
+    <p>Aucun contact enregistré pour le moment.</p>
+  </div>
+{% endif %}
+
+<div class="proxilog-data-container">
+  <h3>Contacts enregistrés ({{ contacts|length }})</h3>
+  <table class="wp-list-table widefat fixed striped">
+    <thead>
+      <tr>
+        <th width="30%">Nom</th>
+        <th width="40%">Email</th>
+        <th width="30%">Téléphone</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for contact in contacts %}
+        <tr>
+          <td>{{ contact.name }}</td>
+          <td>{{ contact.email }}</td>
+          <td>{{ contact.phone }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

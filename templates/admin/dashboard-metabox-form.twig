@@ -1,0 +1,41 @@
+<div class="proxilog-form-container">
+  <h3>Ajouter un contact</h3>
+  <form method="post" action="{{ wp_admin_url('admin-post.php') }}" class="proxilog-contact-form">
+    {{ wp_nonce_field('proxilog_add_contact') }}
+    <input type="hidden" name="action" value="proxilog_add_contact">
+
+    <div class="form-group">
+      <label for="proxilog_name">Nom *</label>
+      <input
+        type="text"
+        id="proxilog_name"
+        name="proxilog_name"
+        class="widefat"
+         />
+    </div>
+
+    <div class="form-group">
+      <label for="proxilog_email">Email *</label>
+      <input
+        type="email"
+        id="proxilog_email"
+        name="proxilog_email"
+        class="widefat"
+         />
+    </div>
+
+    <div class="form-group">
+      <label for="proxilog_phone">Téléphone *</label>
+      <input
+        type="tel"
+        id="proxilog_phone"
+        name="proxilog_phone"
+        class="widefat"
+         />
+    </div>
+
+    <div class="form-group">
+      {{ wp_submit_button('Enregistrer le contact', 'primary', 'proxilog_contact_submit', false) }}
+    </div>
+  </form>
+</div>
