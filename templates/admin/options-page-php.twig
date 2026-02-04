@@ -45,9 +45,7 @@
       <input type="color" name="color" value="{{ settings.color }}">
     </p>
 
-    <p>
-      <input type="submit" name="submit" class="button button-primary" value="Enregistrer les modifications">
-    </p>
+    {{ submit_button('Enregistrer les modifications', 'primary', 'submit', true) }}
 
     <div class="proxilog-features-header">
       <p class="description">

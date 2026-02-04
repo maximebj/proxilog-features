@@ -122,6 +122,10 @@ class TwigService
     $this->twig->addFunction(new TwigFunction('wp_get_current_user_id', function () {
       return get_current_user_id();
     }));
+
+    $this->twig->addFunction(new TwigFunction('submit_button', function ($text = 'Enregistrer les modifications', $type = 'primary', $name = '', $wrap = false, $other_attributes = []) {
+      return submit_button($text, $type, $name, $wrap, $other_attributes);
+    }));
   }
 
   /**
